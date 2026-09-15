@@ -393,12 +393,6 @@ first_name, last_name = "Harry", "Morgan"
 a = b = c = 0            # a, b, and c are all 0
 ```
 
-This is also the cleanest way to **swap** two variables:
-
-```python
-x, y = y, x   # swap values without a temporary variable
-```
-
 ### ⚠️ A Warning About Variable Types
 
 Since the data type is associated with the **value** and not the **variable**, a variable can be assigned different types at different places in a program:
@@ -456,8 +450,6 @@ When you use the `+` operator with two strings, the second is **concatenated** (
 | `0.5`     | `float` | A floating-point number has a fractional part.                         |
 | `1.0`     | `float` | A `float` even when the fractional part is zero — different from `1`.  |
 | `1e3`     | `float` | Exponential (scientific) notation: `1 × 10³` = `1000.0`.               |
-| `2.5e-3`  | `float` | Negative exponent: `2.5 × 10⁻³` = `0.0025`.                            |
-| `100_000` | `int`   | Underscores may be used as digit separators for readability.           |
 | `3,000`   | error   | Do **not** use commas as thousands separators inside numeric literals. |
 | `3 1/2`   | error   | Mixed numbers are not allowed; use `3.5` or `7 / 2`.                   |
 
@@ -593,7 +585,9 @@ Both styles are fine. Pick one and use it consistently.
 *Option 2* — use **docstrings** (triple quotes). Python ignores string literals that are not assigned to a variable, so you can place your comment inside one:
 
 ```python
-""" This is a comment written in more than just one line """
+"""
+This is a comment
+written in more than just one line"""
 print("Hello, World!")
 ```
 
@@ -1211,20 +1205,15 @@ Because strings are immutable, every method returns a **new** string instead of 
 | ---------------------- | ---------------------------------------------------- | ----------------------------- | --------- |
 | `s.upper()`            | All-uppercase copy                                   | `"hi".upper()`                | `"HI"`    |
 | `s.lower()`            | All-lowercase copy                                   | `"HI".lower()`                | `"hi"`    |
-| `s.strip()`            | Remove leading/trailing whitespace                   | `"  hi ".strip()`             | `"hi"`    |
 | `s.replace(old, new)`  | Replace every occurrence of `old` with `new`         | `"hi hi".replace("hi", "yo")` | `"yo yo"` |
 | `s.find(sub)`          | Index of first occurrence of `sub` (`-1` if missing) | `"banana".find("na")`         | `2`       |
 | `s.count(sub)`         | Number of non-overlapping occurrences                | `"banana".count("na")`        | `2`       |
-| `s.startswith(prefix)` | `True` if `s` begins with `prefix`                   | `"hello".startswith("he")`    | `True`    |
-| `s.endswith(suffix)`   | `True` if `s` ends with `suffix`                     | `"hello".endswith("lo")`      | `True`    |
-| `s.isdigit()`          | `True` if every character is a digit                 | `"123".isdigit()`             | `True`    |
-| `s.isalpha()`          | `True` if every character is a letter                | `"abc".isalpha()`             | `True`    |
 
 You can **chain** methods, because each one returns a string:
 
 ```python
-raw = "  Hello, World!  \n"
-clean = raw.strip().lower().replace(",", "")
+raw = "Hello, World!\n"
+clean = raw.lower().replace(",", "")
 print(clean)   # "hello world!"
 ```
 
