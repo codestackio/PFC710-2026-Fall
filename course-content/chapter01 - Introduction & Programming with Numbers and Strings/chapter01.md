@@ -1172,10 +1172,7 @@ greeting[::-1]   # "!dlroW ,olleH" — the string reversed
 | `len("Harry")`        | `5`             | Number of characters                          |
 | `"Harry"[0]`          | `"H"`           | Character at index 0                          |
 | `"Harry"[-1]`         | `"y"`           | Last character (negative indexing)            |
-| `"Harry"[1:4]`        | `"arr"`         | Slice from index 1 up to (not including) 4    |
-| `"a" in "Harry"`      | `True`          | Membership test — is `"a"` a substring?       |
-| `"z" in "Harry"`      | `False`         | Same, with no match                           |
-| `"Harry" == "harry"`  | `False`         | Equality (case-sensitive)                     |
+| `"Harry"[1:4]`        | `"arr"`         | Slice from index 1 up to (not including) 4    |                |
 | `str(42) + " slices"` | `"42 slices"`   | Use `str()` to convert numbers before joining |
 
 ### Methods
