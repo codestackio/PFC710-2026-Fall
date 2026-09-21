@@ -24,7 +24,7 @@ In this chapter you will **learn**:
 ## Chapter Contents
 
 - **2.1 The `if` Statement** — Two-way branches, compound statements, statement blocks, and `pass`
-- **2.2 Relational Operators** — Comparing numbers, floating-point values, and strings
+- **2.2 Relational Operators** — Comparing numbers and strings
 - **2.3 Nested Branches** — An `if` inside another `if`
 - **2.4 Multiple Alternatives** — `if` / `elif` / `else` chains
 - **2.5 Boolean Variables and Operators** — `and` / `or` / `not`, precedence, short-circuit evaluation, De Morgan's law, truthy and falsy values
@@ -207,23 +207,6 @@ if floor == 13:     # equality test: is floor equal to 13?
 >        ^^^^^^^^^^
 > SyntaxError: invalid syntax. Maybe you meant '==' or ':=' instead of '='?
 > ```
-
-### Comparing Floating-Point Numbers
-
-Floating-point arithmetic is not always exact, so `==` can give a surprising answer:
-
-```python
-x = 0.1 + 0.2
-print(x)           # 0.30000000000000004
-print(x == 0.3)    # False
-```
-
-Instead of testing floats for exact equality, test whether they are **close enough**:
-
-```python
-if abs(x - 0.3) < 0.000001:
-    print("Close enough")
-```
 
 ### Comparing Strings
 
@@ -817,7 +800,7 @@ else:
 ## Key Takeaways
 
 1. **Decision-making** is fundamental to programming — use `if`, `elif`, and `else` to control program flow.
-2. **Relational operators** compare values and produce `True` or `False`. Use `==` (not `=`) to test equality, and compare floats with a tolerance rather than `==`.
+2. **Relational operators** compare values and produce `True` or `False`. Use `==` (not `=`) to test equality.
 3. **Nested `if` statements** enable decisions that depend on earlier decisions.
 4. In an **`elif` chain**, only the first true branch runs — test the most restrictive condition first.
 5. **Boolean operators** (`and`, `or`, `not`) combine conditions; precedence is `not`, then `and`, then `or` — use parentheses when mixing them.
