@@ -388,7 +388,7 @@ def min_max(first, second):
         return second, first
 ```
 
-Python groups the returned values together and sends them back as **one combined result**. You will learn about **tuples** — the data type Python uses for this — in a later chapter. For now, focus on **unpacking**: assigning each returned value to its own variable.
+Python groups the returned values together and sends them back as **one combined result**. You will learn about **tuples** — the data type Python uses for this — in Chapter 5 (§5.5). For now, focus on **unpacking**: assigning each returned value to its own variable.
 
 ```python
 low, high = min_max(10, 3)
