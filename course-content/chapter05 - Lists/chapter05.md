@@ -41,23 +41,18 @@ A **Python list** is an ordered, mutable collection that can hold multiple items
 - **Heterogeneous:** A list can store different data types (e.g., integers, strings, even other lists).
 - **Dynamic:** Lists grow or shrink as needed.
 
-### Syntax 5.1: Lists
-
-```python
-more_values = []                                # creates an empty list
-values = [32, 54, 67, 29, 35, 80, 115]          # creates a list with initial values
-
-values[i] = 0                                   # use brackets to access an element
-element = values[i]
-```
-
-- A list is written as values separated by commas, inside square brackets `[]`.
-- `[]` on its own creates an **empty list**.
-
 ### Creating a List
+
+A list is written as values separated by commas, inside square brackets `[]`:
 
 ```python
 values = [32, 54, 67.5, 29, 35, 80, 115, 44.5, 100, 65]
+```
+
+Square brackets with nothing inside create an **empty list** — a list with no elements yet, which you can add to later (§5.2):
+
+```python
+more_values = []
 ```
 
 ### Accessing List Elements
@@ -77,6 +72,23 @@ Both lists and strings are **sequences**, and the `[]` operator is used to acces
 
 1. **Content:** Lists can hold values of any type; strings are sequences of characters.
 2. **Mutability:** Strings are **immutable** — you cannot change the characters in a string. Lists are **mutable** — you can replace, add, and remove elements.
+
+Replacing an element works for a list, but the same operation on a string is an error:
+
+```python
+values = [32, 54, 67.5]
+values[0] = 10       # ✅ Lists are mutable
+print(values)        # [10, 54, 67.5]
+
+greeting = "Hello"
+greeting[0] = "J"    # ❌ Error: strings are immutable
+```
+
+```
+TypeError: 'str' object does not support item assignment
+```
+
+To get `"Jello"`, you cannot edit the existing string — you have to assign a **new** string to the variable: `greeting = "Jello"`. Adding and removing list elements are covered in §5.2.
 
 ### ⚠️ Common Error: Out-of-Range Errors
 
@@ -573,12 +585,6 @@ values[j] = temp
 
 ![Four panels: (1) values[1] = 54 and values[3] = 29 are to be swapped; (2) temp = values[i] stores 54; (3) values[i] = values[j] copies 29 into index 1; (4) values[j] = temp copies 54 into index 3](media/swap-steps.jpeg)
 
-**Tip:** Python can also swap two elements in one line, using the same comma syntax you used to return and unpack several values in §4.4:
-
-```python
-values[i], values[j] = values[j], values[i]
-```
-
 ### Reading Input
 
 Read values from the user and store them in a list, stopping at a sentinel (§3.3):
@@ -646,7 +652,7 @@ When you call a function, Python initializes each parameter variable with a **re
 - **Reassigning** the parameter (`n = 10`, `numbers = [0, 0, 0]`) makes the local variable refer to a different object. The caller's variable is not affected.
 - **Mutating** the object (`numbers[0] = 99`, `numbers.append(4)`) changes the one object that both the caller and the function refer to. The caller sees the change.
 
-Numbers, strings, and tuples are **immutable** — they have no operations that change them in place — so a function can never change a caller's number or string. Lists are **mutable**, so a function can change a caller's list.
+Numbers, strings, and tuples (taught in next section ) are **immutable** — they have no operations that change them in place — so a function can never change a caller's number or string. Lists are **mutable**, so a function can change a caller's list.
 
 ```python
 def try_change_int(n):
@@ -708,12 +714,33 @@ A tuple with **one** element needs a trailing comma — `(5,)` is a tuple, but `
 ### Some Use Cases
 
 - **Coordinates or points:** `point = (x, y)` or `point = (x, y, z)` — a position in 2D or 3D space should not change by accident.
-- **Multiple return values:** Functions that produce several values (e.g., quotient and remainder, or min and max) return a tuple; callers unpack it with `a, b = f()`.
+- **Multiple return values:** Functions that produce several values (e.g., quotient and remainder, or min and max) return a tuple; callers unpack it with `a, b = f()` (see *Returning Multiple Values* below).
 - **Constants:** Fixed sequences such as `RGB_WHITE = (255, 255, 255)` that should not be altered after creation.
 
 ### Returning Multiple Values
 
-In §4.4 you returned several values from a function with `return first, second` and unpacked them with `low, high = min_max(10, 3)`. The "one combined result" Python sends back is a **tuple**:
+In §4.4 you returned several values from a function with `return first, second` and unpacked them with `low, high = min_max(10, 3)`. The "one combined result" Python sends back is a **tuple**. Here is `min_max` again:
+
+```python
+def min_max(first, second):
+    if first <= second:
+        return first, second
+    else:
+        return second, first
+```
+
+`return first, second` is the same as `return (first, second)` — the parentheses of a tuple are optional, so the function actually returns **one tuple** holding two values. You can see this by storing the result in a single variable instead of unpacking it:
+
+```python
+result = min_max(10, 3)
+print(result)          # (3, 10)
+print(type(result))    # <class 'tuple'>
+print(result[0])       # 3 — index it like any tuple
+```
+
+Unpacking with `low, high = min_max(10, 3)` simply takes that tuple apart, assigning its first element to `low` and its second to `high`.
+
+You can also write the parentheses explicitly, as in this function that returns three values:
 
 ```python
 def read_date():
@@ -775,7 +802,7 @@ In short: anything that **reads** a tuple or **builds a new** one is fine; anyth
 3. A list variable holds a **reference**. Assigning it to another variable creates an **alias**; use **`list(values)`** or **`values[:]`** to make a copy
 4. Common operations include **`append`**, **`insert`**, **`pop`**, **`remove`**, **`in`**, **`index`**, **`+`**, **`*`**, slicing, and **`sort()`**; built-ins such as **`len`**, **`sum`**, **`max`**, **`min`**, and **`sorted`** work on lists
 5. **List algorithms** follow the loop patterns from Chapter 3: fill a list in a loop, combine elements, scan for the maximum or minimum, search for a match, collect or count matches, and remove items carefully with a `while` loop
-6. Swap two elements with a **temporary variable** (or with `a, b = b, a`)
+6. Swap two elements with a **temporary variable**
 7. Passing a list to a function passes a **reference** — **mutating** the list inside the function changes the caller's list; **reassigning** the parameter does not
 8. **Tuples** are like lists but **immutable**; use them for fixed data and for returning multiple values from a function
 
