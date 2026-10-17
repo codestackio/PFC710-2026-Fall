@@ -760,7 +760,7 @@ The following are illegal inputs:
    ValueError: invalid literal for int() with base 10: 'five'
    ```
 
-   Handling this case needs Python's exception mechanism, covered in Chapter 6.
+   Handling this case needs Python's exception mechanism, covered in a later chapter.
 
 ### elevatorsim2.py Example
 
