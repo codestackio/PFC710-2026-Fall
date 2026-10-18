@@ -596,6 +596,8 @@ for item in objects:
 
 When the bucket is empty, AWS leaves `"Contents"` out of the response entirely. `response.get("Contents", [])` works like `os.environ.get` in §6.1: it returns the value if it is there, and the default — an empty list — if it is not.
 
+Each `item` in the list describes one object. `item['Key']` is its key and `item['Size']` is its size in **bytes**, as a whole number (`int`), so you can add sizes up or compare them like any other number.
+
 ### Downloading a File
 
 ```python
