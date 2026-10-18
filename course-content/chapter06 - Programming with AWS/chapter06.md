@@ -144,13 +144,7 @@ $env:COURSE_NAME = "PFC710"
 python env_demo.py
 ```
 
-**Permanently, for your Windows account.** Either run
-
-```text
-setx COURSE_NAME PFC710
-```
-
-or search the Start menu for **Edit environment variables for your account** and add it under **User variables**.
+**Permanently, for your Windows account.** Search the Start menu for **Edit environment variables for your account** and add it under **User variables**.
 
 A permanent variable is only seen by programs started **after** you set it. Close and reopen the terminal — and **restart PyCharm** — before you test it.
 
@@ -747,7 +741,7 @@ When something goes wrong, read the **last line** of the error output — it nam
 ## Key Takeaways
 
 1. **Environment variables** are name = value pairs the operating system passes to a program. Use them for settings and for **secrets**, so neither is hard-coded
-2. Read them with **`os.environ.get("NAME", default)`**; the value is always a **string**. Set them in a PyCharm **run configuration**, with `set` / `$env:` for one terminal window, or with `setx` permanently
+2. Read them with **`os.environ.get("NAME", default)`**; the value is always a **string**. Set them in a PyCharm **run configuration**, with `set` / `$env:` for one terminal window, or permanently under **Edit environment variables for your account**
 3. **External libraries** extend Python beyond the standard library. Find them on **PyPI** and install them with **`pip install <name>`** or PyCharm's **Python Packages** window
 4. Each PyCharm project has its own **virtual environment** (`.venv`); a `ModuleNotFoundError` usually means the package was installed somewhere else. List a project's dependencies in **`requirements.txt`**
 5. **AWS Academy** credentials have **three** parts — access key ID, secret access key, and **session token** — and they **expire** at the end of each lab session
