@@ -74,8 +74,8 @@ import os
 course = os.environ.get("COURSE_NAME", "unknown course")
 print(f"Welcome to {course}!")
 
-pizza_count = int(os.environ.get("PIZZA_COUNT", "1"))
-print(f"Ordering {pizza_count} pizza(s), that's {pizza_count * 8} slices.")
+lab_hours = int(os.environ.get("LAB_HOURS", "4"))
+print(f"Your lab session lasts {lab_hours} hour(s), that's {lab_hours * 60} minutes.")
 ```
 
 `os.environ.get(name, default)` returns the variable's value, or `default` if the variable is not set. If you leave out the default, it returns `None`.
@@ -84,19 +84,19 @@ Run it with no variables set:
 
 ```text
 Welcome to unknown course!
-Ordering 1 pizza(s), that's 8 slices.
+Your lab session lasts 4 hour(s), that's 240 minutes.
 ```
 
-Run it again with `COURSE_NAME=PFC710` and `PIZZA_COUNT=3` (you will see how in a moment):
+Run it again with `COURSE_NAME=PFC710` and `LAB_HOURS=2` (you will see how in a moment):
 
 ```text
 Welcome to PFC710!
-Ordering 3 pizza(s), that's 24 slices.
+Your lab session lasts 2 hour(s), that's 120 minutes.
 ```
 
 Same code, different output.
 
-> **Note:** The value of an environment variable is **always a string**, even when it looks like a number. That is why the program converts `PIZZA_COUNT` with `int()` — just as you do with the result of `input()`.
+> **Note:** The value of an environment variable is **always a string**, even when it looks like a number. That is why the program converts `LAB_HOURS` with `int()` — just as you do with the result of `input()`.
 
 ### ⚠️ Common Error: `KeyError`
 
@@ -118,7 +118,7 @@ The easiest place to set a variable for a program you are developing is its **ru
 4. Add your variables, separated by semicolons:
 
    ```text
-   PYTHONUNBUFFERED=1;COURSE_NAME=PFC710;PIZZA_COUNT=3
+   PYTHONUNBUFFERED=1;COURSE_NAME=PFC710;LAB_HOURS=2
    ```
 
    Or click the small icon at the right end of the field to edit them in a table, one row per variable.
