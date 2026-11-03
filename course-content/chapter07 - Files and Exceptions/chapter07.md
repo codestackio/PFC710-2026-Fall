@@ -21,7 +21,7 @@ In this chapter you will **learn**:
 
 - **7.1 Reading and Writing Text Files** — `open`, `close`, `readline`, and `write`
 - **7.2 Processing Text** — Looping over lines, `rstrip`, `split`, and records
-- **7.3 Exceptions** — `try`/`except` and `raise`
+- **7.3 Exceptions** — `try`/`except`, catching `Exception`, and `raise`
 - **7.4 The `with` Statement** — Closing files automatically
 
 ---
@@ -328,7 +328,7 @@ The word before the colon, `ValueError`, is the name to put after `except`. For 
 
 **Check the documentation.** Some errors are hard to cause on purpose, such as a lost network connection. For those, look up the function you are calling, because its documentation usually says what it can raise. The Python documentation also [lists all the built-in exceptions](https://docs.python.org/3/library/exceptions.html).
 
-Only catch the exceptions you can respond to. If something unexpected happens, it is better for the program to stop and show you the error than to hide it.
+For the errors you expect, catch the specific exception, so that you can give the user a helpful response. For everything else, there is a catch-all, covered below.
 
 ### Handling Several Kinds of Exception
 
@@ -344,8 +344,8 @@ try:
     print(f"The value is {value}.")
 except FileNotFoundError:
     print("Error: file not found.")
-except ValueError as error:
-    print(f"Error: {error}")
+except ValueError as e:
+    print(f"Error: {e}")
 ```
 
 If the first line of the file is `35x2`, this prints:
@@ -353,6 +353,33 @@ If the first line of the file is `35x2`, this prints:
 ```text
 Error: invalid literal for int() with base 10: '35x2\n'
 ```
+
+### Catching Everything Else: `Exception`
+
+**`Exception`** matches almost any error. Put `except Exception as e` **last**, after the specific `except` blocks, to catch whatever you did not expect. Include `e` in the message, so the user (and you) can still see what went wrong:
+
+```python
+try:
+    total = float(input("Total bill: "))
+    people = int(input("Number of people: "))
+    print(f"Each person pays {total / people:.2f}.")
+except ValueError:
+    print("Please enter numbers only.")
+except Exception as e:
+    print(f"Unexpected error: {e}")
+```
+
+```text
+Total bill: 90
+Number of people: 0
+Unexpected error: float division by zero
+```
+
+A zero is not really unexpected. The programmer simply forgot about it, and the catch-all kept the program from crashing. Once you notice a case like this, give it its own `except` (here, `except ZeroDivisionError:`) with a clearer message.
+
+Python checks the `except` blocks from top to bottom and runs the **first** one that matches. That is why `Exception` must come last: if it came first, it would catch the `ValueError` too, and the helpful message would never be shown.
+
+**Watch out:** the catch-all also catches mistakes in **your own code**. If you misspell `total` as `totl`, the program above prints `Unexpected error: name 'totl' is not defined` instead of an error that points to the line. If you see an unexpected error while testing, temporarily comment out the `except Exception` block to get the full error message with its line number.
 
 ### Raising Your Own Exceptions
 
@@ -369,8 +396,8 @@ def main():
     try:
         new_balance = withdraw(100, 500)
         print(f"New balance: {new_balance}")
-    except ValueError as error:
-        print(f"Error: {error}")
+    except ValueError as e:
+        print(f"Error: {e}")
 
 
 main()
@@ -406,8 +433,8 @@ try:
     print(f"The value is {value}.")
 except FileNotFoundError:
     print("Error: file not found.")
-except ValueError as error:
-    print(f"Error: {error}")
+except ValueError as e:
+    print(f"Error: {e}")
 ```
 
 Notice that there is no call to `close()`. Now that you know why it exists, use `with` whenever you work with a file.
@@ -439,8 +466,10 @@ def main():
             done = True
         except FileNotFoundError:
             print("Error: file not found. Please try again.")
-        except ValueError as error:
-            print(f"Error: {error}")
+        except ValueError as e:
+            print(f"Error: {e}")
+        except Exception as e:
+            print(f"Unexpected error: {e}")
 
 
 main()
@@ -467,7 +496,7 @@ The total is 348.75.
 2. **`readline()`** reads one line and returns `""` at the end of the file; **`for line in file`** does the same job more simply. Lines are strings and keep their `\n`
 3. **`write()`** writes a string and does not add a newline for you
 4. **`rstrip()`** removes the newline, **`split()`** breaks a line into a list of words or fields, and `int()` and `float()` convert text to numbers
-5. An **exception** stops the program unless it is handled. Put risky code in a **`try`** block and the response in an **`except`** block; `except ValueError as error` gives you the message
+5. An **exception** stops the program unless it is handled. Put risky code in a **`try`** block and the response in an **`except`** block; `except ValueError as e` gives you the message. End with **`except Exception as e`** to catch anything unexpected, and include `e` in its message
 6. Use **`raise`** to signal a problem your function cannot fix. Raise where you detect the problem, and catch where you can respond to it
 7. **`with open(name, mode) as file:`** closes the file automatically, even if an exception occurs. Prefer it whenever you work with a file
 
