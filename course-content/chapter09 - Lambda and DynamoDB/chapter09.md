@@ -138,7 +138,7 @@ print(json.dumps(order, indent=4))
 }
 ```
 
-A dictionary key that is not a string is turned into one: `json.dumps({101: "Emma"})` gives `{"101": "Emma"}`. A tuple becomes a JSON array.
+A dictionary key that is not a string is turned into one: `json.dumps({101: "Emma"})` gives `{"101": "Emma"}`.
 
 ### Text to Dictionary: `json.loads`
 
@@ -214,7 +214,7 @@ This is called **serverless** computing. There are still servers, but they are A
 - **No setup.** You never install Python or boto3 on a server; Lambda already has both.
 - **Pay per use.** You pay only while your function runs, measured in milliseconds. When nobody calls it, it costs nothing.
 - **Scales by itself.** If a thousand requests arrive at once, Lambda runs a thousand copies of your function.
-- **Short-lived.** Each run starts fresh and should finish within seconds (the default limit is 3 seconds, the maximum 15 minutes). A Lambda function does not remember anything between runs, so anything it must keep goes into storage such as S3 or DynamoDB.
+- **Short-lived.** Each run starts fresh and should finish within seconds (the default limit is 3 seconds, the maximum 30 minutes). A Lambda function does not remember anything between runs, so anything it must keep goes into storage such as S3 or DynamoDB.
 
 > **Note:** AWS Lambda has nothing to do with Python's `lambda` keyword, which you may see in other courses. In this course, "Lambda" always means the AWS service.
 
@@ -243,13 +243,22 @@ Notice what is **missing**: there is no `main()` and no call to `lambda_handler`
 
 Before you write any code, create the function in the console. It will hold the code you upload in §9.3.
 
+**Event functions and web functions.** The Lambda console offers two kinds of function:
+
+| Kind               | How it runs                                                                                    | In this course |
+| ------------------ | ---------------------------------------------------------------------------------------------- | -------------- |
+| **Event function** | Lambda calls your handler, `lambda_handler(event, context)`, once for each event — a test, a queue message, an uploaded file, a schedule | **Always this one** |
+| **Web function**   | Your code is a small web server that answers HTTP requests itself. It has no handler and no triggers | Not used       |
+
+An event function is what Lambda always was; AWS renamed it in 2026 when it added web functions. (The API, boto3, and the CLI still just say "function".) Everything in this chapter and the next uses **event functions**, so whenever the course says "a Lambda function", it means an event function.
+
 1. Start your AWS Academy lab and open the **AWS Console** (§6.3).
 2. Search for **Lambda** and open it. Check that the region at the top right is **N. Virginia (us-east-1)**.
-3. Click **Create function** and choose **Author from scratch**.
+3. Open the **Event Functions** page, click **Create Event Function**, and choose **Author from scratch**.
 4. **Function name:** `hello`
-5. **Runtime:** the newest **Python 3** version in the list (for example, Python 3.13).
-6. Open **Change default execution role**, choose **Use an existing role**, and select **`LabRole`**.
-7. Click **Create function**.
+5. **Runtime:** the newest **Python 3** version in the list (for example, Python 3.14). Leave the architecture as **x86_64**.
+6. Under the execution role settings (**Change default execution role**), choose **Use an existing role**, and select **`LabRole`**.
+7. Click **Create Event Function**.
 
 > **Why `LabRole`?** The **execution role** decides which AWS services your function may use. AWS Academy does not let you create roles, so every Lambda function in this course uses `LabRole`, which already allows Lambda to write logs and to use S3, DynamoDB, and SQS. If you leave the default, creating the function fails with a permissions error.
 
@@ -434,12 +443,6 @@ pip installed four libraries you never asked for: `requests` needs them (its **d
 
 If your project has a **`requirements.txt`** (§6.2), install everything in it into the folder in one go: `pip install -r requirements.txt -t package`. Leave `boto3` out of the file for Lambda, or simply delete it from `package` before zipping.
 
-> **Libraries with compiled code.** Lambda runs on **Linux**, but pip installs the **Windows** version of a library. For libraries written purely in Python, such as `requests`, the two are the same. Some libraries — for example `numpy` and `pandas` — contain compiled code that only runs on the system it was built for, and the function fails with an `ImportModuleError` naming the library. For those, ask pip for the Linux version, matching your function's Python version:
->
-> ```text
-> pip install numpy -t package --platform manylinux2014_x86_64 --only-binary=:all: --python-version 3.13
-> ```
-
 ### Step 5: Upload It to Lambda
 
 1. Open your `hello` function and its **Code** tab.
@@ -453,16 +456,16 @@ The code editor now shows your `lambda_function.py`. Uploading a zip **deploys**
 
 Check that it works on AWS too, with the same payload:
 
-1. Click **Test** (or open the **Test** tab).
-2. Choose **Create new event**, name it `emma`, and replace the sample JSON with the payload, written as JSON (§9.1):
+1. On the **Code** tab, find the **TEST EVENTS** section and choose **Create test event**.
+2. Name it `emma`, and replace the **Event JSON** with the payload, written as JSON (§9.1):
 
    ```json
    {"name": "Emma"}
    ```
 
-3. Save it, then click **Test** again.
+3. Choose **Save**, then click the run (▶) icon next to `emma`.
 
-The result shows the **response**, which is the same as on your computer:
+The **OUTPUT** tab shows the **response**, which is the same as on your computer:
 
 ```json
 {
@@ -483,7 +486,7 @@ REPORT RequestId: 6b8e1c2d-...  Duration: 1.42 ms  Billed Duration: 2 ms  Memory
 
 ### Logs in CloudWatch
 
-The test page shows the logs of the run you just started. Every run, however it was started, also writes its logs to **Amazon CloudWatch**. Open the **Monitor** tab and click **View CloudWatch logs**. Each **log stream** holds the logs of a group of runs, newest at the top. When a function is started by something other than the Test button — such as a queue in Chapter 10 — CloudWatch is where you see what it printed.
+The **OUTPUT** tab shows the logs of the run you just started. Every run, however it was started, also writes its logs to **Amazon CloudWatch**. Open the **Monitor** tab and click **View CloudWatch logs**. Each **log stream** holds the logs of a group of runs, newest at the top. When a function is started by something other than a test event — such as a queue in Chapter 10 — CloudWatch is where you see what it printed.
 
 ### Example: Totaling an Order
 
@@ -528,7 +531,7 @@ Response: {"error": "Unknown product P999"}
 
 An unknown product is not a crash. It is a normal answer that says what went wrong, so whoever called the function can show it to the user.
 
-When both tests pass, create a function named **`order-total`** in the console (with `LabRole`), package and upload `lambda_function.py` (steps 4 and 5), and test it there with the event `{"product_id": "P100", "quantity": 3}`. The response is the same as the first one above.
+When both tests pass, create an event function named **`order-total`** in the console (with `LabRole`), package and upload `lambda_function.py` (steps 4 and 5), and test it there with the event `{"product_id": "P100", "quantity": 3}`. The response is the same as the first one above.
 
 ### ⚠️ Common Error: An Exception in the Handler
 
@@ -979,7 +982,7 @@ Any number you read from DynamoDB is a `Decimal`, so convert it before you retur
 
 1. **JSON** is the standard text format for sending dictionaries between programs. **`json.dumps`** turns a dictionary into JSON text and **`json.loads`** turns it back. JSON uses double quotes, `true`/`false`, and `null`
 2. **AWS Lambda** runs a Python **handler**, `lambda_handler(event, context)`, in the cloud. `event` is the input dictionary, the **return** value is the output, and **`print`** goes to the logs in **CloudWatch**
-3. In AWS Academy, every function uses the **`LabRole`** execution role. Inside Lambda, boto3 gets its credentials from that role; no keys go into the code
+3. In the console, create an **event function** (**Create Event Function**), not a web function. In AWS Academy, every function uses the **`LabRole`** execution role. Inside Lambda, boto3 gets its credentials from that role; no keys go into the code
 4. Develop the handler in PyCharm as **`lambda_function.py`**, and test it with a **test program** that imports it and calls `lambda_handler(payload, None)` with test payloads. Print the response with `json.dumps`, as Lambda does
 5. When the tests pass, **zip** `lambda_function.py` (the file, not the folder). If it imports an external library other than boto3, install it with **`pip install <library> -t package`**, copy the handler into `package`, and zip the folder's **contents**. **Upload** the zip with **Upload from → .zip file**, set the function's environment variables, and run one **test event** in the console. An uncaught exception makes a run fail, and the error shows `errorType` and `errorMessage`
 6. **DynamoDB** stores **items** — dictionaries — in **tables**. Every item must have the table's **partition key**, which is unique
